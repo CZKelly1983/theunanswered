@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Unanswered — Chris Kelly</title>
+  <meta name="description" content="You know something needs to change. You don't yet have the language to say what. Chris Kelly — Fractional CPO & CTO." />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-G4QY9EVNWY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-G4QY9EVNWY');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:          #0A0A0A;
+      --ink-mid:      #141414;
+      --paper:        #F4F1EC;
+      --paper-mid:    #EAE6DF;
+      --dim:          #6B6560;
+      --dim-light:    #9A948E;
+      --accent:       #C8392B;
+      --accent-dim:   #8C2820;
+      --lab:          #1C2B1A;
+      --lab-accent:   #4A7C3F;
+      --lab-rule:     #243322;
+      --sand-accent:  #8B6914;
+      --sand-rule:    #2A2218;
+      --rule-dark:    #222222;
+      --rule-light:   #D5D0C9;
+      --mono:         'DM Mono', monospace;
+      --serif:        'Playfair Display', Georgia, serif;
+      --sans:         'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body.menu-open { overflow: hidden; }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 800;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.94) 0%, transparent 100%);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-logo:hover { color: var(--paper); }
+
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+
+    .nav-link {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: rgba(244,241,236,0.75); }
+
+    .nav-cta {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-dim);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-cta:hover { color: #E04535; border-color: #E04535; }
+
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .nav-burger span {
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: rgba(244,241,236,0.5);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 700;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .nav-overlay.open { opacity: 1; pointer-events: all; }
+    .nav-overlay a {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      font-weight: 700;
+      color: rgba(244,241,236,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-overlay a:hover { color: var(--paper); }
+    .nav-overlay .overlay-cta {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent-dim);
+      padding-bottom: 2px;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1.25rem 1.5rem; }
+      .nav-links-desktop { display: none !important; }
+      .nav-burger { display: flex; }
+    }
+    @media (min-width: 901px) {
+      .nav-burger { display: none; }
+      .nav-overlay { display: none; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--ink);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10rem 3rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-word {
+      position: absolute;
+      bottom: -0.15em;
+      right: -0.04em;
+      font-family: var(--serif);
+      font-size: clamp(10rem, 20vw, 20rem);
+      font-weight: 900;
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(244,241,236,0.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.7s ease forwards 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-headline {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 6vw, 6rem);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+      color: var(--paper);
+      max-width: 18ch;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.9s ease forwards 0.5s;
+    }
+
+    .hero-headline .line-2 {
+      color: rgba(244,241,236,0.45);
+      font-style: italic;
+      font-weight: 400;
+      display: block;
+    }
+
+    .hero-sub {
+      margin-top: 3rem;
+      max-width: 48ch;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.8s ease forwards 0.95s;
+      border-left: 2px solid var(--accent);
+      padding-left: 1.25rem;
+    }
+
+    .hero-sub p {
+      font-family: var(--sans);
+      font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+      font-weight: 300;
+      color: rgba(244,241,236,0.68);
+      line-height: 1.7;
+    }
+
+    .hero-down {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.4s;
+    }
+    .hero-down span {
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.25);
+      writing-mode: vertical-rl;
+    }
+
+    /* ── SHARED ── */
+    .section-paper { background: var(--paper);   color: var(--ink); }
+    .section-dark  { background: var(--ink-mid); color: var(--paper); }
+    .section-lab   { background: var(--lab);      color: var(--paper); }
+    .section-sand  { background: #1A1710;         color: var(--paper); }
+
+    .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 7rem 3rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      margin-bottom: 3.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: currentColor;
+    }
+    .section-paper .section-label { color: var(--accent); }
+    .section-dark  .section-label { color: var(--accent); }
+    .section-lab   .section-label { color: var(--lab-accent); }
+    .section-sand  .section-label { color: var(--sand-accent); }
+
+    /* ── WHO ── */
+    .who-grid {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .who-name {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .who-title {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim-light);
+      font-weight: 400;
+      margin-top: 0.75rem;
+    }
+
+    .who-socials {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      border: 1px solid var(--rule-light);
+      padding: 0.4rem 0.8rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .social-link:hover { color: var(--ink); border-color: var(--ink); }
+    .social-link svg { width: 11px; height: 11px; fill: currentColor; flex-shrink: 0; }
+
+    .who-body p {
+      font-size: 1rem;
+      color: #2A2520;
+      line-height: 1.85;
+      margin-bottom: 1.4rem;
+      font-weight: 300;
+    }
+    .who-body p:last-child { margin-bottom: 0; }
+    .who-body strong { font-weight: 500; color: var(--ink); }
+    .who-body em { font-style: italic; color: var(--dim); }
+
+    .who-selection {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule-light);
+      font-size: 0.9rem;
+      color: var(--dim);
+      line-height: 1.75;
+      font-style: italic;
+    }
+
+    /* ── METHODOLOGY ── */
+    .method-headline {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+      max-width: 32ch;
+    }
+
+    .method-headline-sub {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.25;
+      color: rgba(244,241,236,0.35);
+      margin-bottom: 3rem;
+      max-width: 32ch;
+    }
+
+    .method-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      border-top: 1px solid var(--rule-dark);
+      padding-top: 3rem;
+    }
+
+    .method-body p {
+      font-size: 0.975rem;
+      color: rgba(244,241,236,0.5);
+      line-height: 1.85;
+      margin-bottom: 1.25rem;
+    }
+    .method-body p:last-child { margin-bottom: 0; }
+    .method-body strong { color: var(--paper); font-weight: 500; }
+
+    .method-closer {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--rule-dark);
+      padding-top: 2.5rem;
+      font-family: var(--serif);
+      font-size: clamp(1rem, 1.8vw, 1.35rem);
+      font-style: italic;
+      color: rgba(244,241,236,0.3);
+    }
+    .method-closer strong {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    /* ── THE WORK ── */
+    .work-meta {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.3);
+      margin-bottom: 3rem;
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rule-dark);
+      border: 1px solid var(--rule-dark);
+      margin-bottom: 0;
+    }
+
+    .case-card {
+      background: var(--ink-mid);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .case-region {
+      font-family: var(--mono);
+      font-size: 0.54rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+
+    .case-wrong-q {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: rgba(244,241,236,0.32);
+      line-height: 1.5;
+      padding-left: 0.85rem;
+      border-left: 2px solid rgba(244,241,236,0.12);
+      margin-bottom: 1.25rem;
+    }
+    .case-wrong-q::before {
+      content: 'The wrong question';
+      display: block;
+      font-size: 0.48rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.18);
+      margin-bottom: 0.3rem;
+    }
+
+    .case-body {
+      font-size: 0.875rem;
+      color: rgba(244,241,236,0.45);
+      line-height: 1.8;
+      flex: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .case-type {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--rule-dark);
+      color: rgba(244,241,236,0.3);
+      align-self: flex-start;
+    }
+
+    .case-type.is-product {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── INTERSTITIALS ── */
+    .interstitial {
+      background: var(--ink);
+      padding: 7rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .interstitial::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60vw; height: 60vw;
+      max-width: 600px; max-height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,57,43,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .interstitial-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .interstitial-line {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--paper);
+    }
+    .interstitial-line em {
+      display: block;
+      font-style: italic;
+      font-weight: 400;
+      color: rgba(244,241,236,0.28);
+      margin-top: 0.3rem;
+    }
+
+    /* work interstitial — slightly different treatment */
+    .interstitial-work .interstitial-line {
+      font-size: clamp(1.4rem, 3vw, 2.5rem);
+    }
+
+    /* bridge line */
+    .bridge {
+      background: var(--ink);
+      padding: 2rem 3rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .bridge p {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.22);
+    }
+
+    /* ── LAB ── */
+    .lab-intro-primary {
+      font-size: 0.975rem;
+      color: rgba(244,241,236,0.5);
+      line-height: 1.85;
+      max-width: 58ch;
+      margin-bottom: 1.25rem;
+    }
+
+    .lab-intro-secondary {
+      font-size: 0.975rem;
+      font-style: italic;
+      color: rgba(244,241,236,0.32);
+      line-height: 1.85;
+      max-width: 58ch;
+      margin-bottom: 3.5rem;
+    }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      background: var(--lab-rule);
+      border: 1px solid var(--lab-rule);
+    }
+
+    .lab-card {
+      background: #172415;
+      padding: 2.75rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid transparent;
+      transition: background 0.3s, transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .lab-card:hover {
+      background: #1E2E1C;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      border-color: var(--lab-accent);
+    }
+
+    .lab-card-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .lab-arrow {
+      position: absolute;
+      top: 2rem; right: 2rem;
+      font-size: 1rem;
+      color: var(--lab-rule);
+      transition: color 0.25s, transform 0.25s;
+    }
+    .lab-card:hover .lab-arrow { color: var(--lab-accent); transform: translate(3px,-3px); }
+
+    .lab-domain {
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.2);
+      margin-bottom: 1.25rem;
+    }
+
+    .lab-wrong-q {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: rgba(244,241,236,0.38);
+      line-height: 1.5;
+      padding-left: 0.85rem;
+      border-left: 2px solid var(--lab-accent);
+      margin-bottom: 1.25rem;
+    }
+    .lab-wrong-q::before {
+      content: 'The wrong question';
+      display: block;
+      font-size: 0.48rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.18);
+      margin-bottom: 0.3rem;
+    }
+
+    .lab-title {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--paper);
+    }
+
+    .lab-tag {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.48rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--lab-accent);
+      color: var(--lab-accent);
+      align-self: flex-start;
+    }
+
+    .lab-body p {
+      font-size: 0.9rem;
+      color: rgba(244,241,236,0.42);
+      line-height: 1.82;
+      margin-bottom: 1rem;
+    }
+    .lab-body p:last-child { margin-bottom: 0; }
+
+    .lab-access {
+      margin-top: 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--lab-accent);
+      border-top: 1px solid var(--lab-rule);
+      padding-top: 1.25rem;
+    }
+
+    /* ── SANDBOX ── */
+    .sand-intro {
+      font-size: 0.975rem;
+      color: rgba(244,241,236,0.42);
+      line-height: 1.85;
+      max-width: 58ch;
+      margin-bottom: 3.5rem;
+    }
+    .sand-intro em { font-style: italic; color: rgba(244,241,236,0.68); }
+
+    .sand-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--sand-rule);
+      border: 1px solid var(--sand-rule);
+    }
+
+    .sand-card {
+      background: #161410;
+      padding: 2.5rem 2rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid transparent;
+      transition: background 0.3s, transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .sand-card:hover {
+      background: #1E1B12;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      border-color: var(--sand-accent);
+    }
+
+    .sand-arrow {
+      position: absolute;
+      top: 1.75rem; right: 1.75rem;
+      font-size: 0.9rem;
+      color: var(--sand-rule);
+      transition: color 0.25s, transform 0.25s;
+    }
+    .sand-card:hover .sand-arrow { color: var(--sand-accent); transform: translate(3px,-3px); }
+
+    .sand-domain {
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.18);
+      margin-bottom: 1.25rem;
+    }
+
+    .sand-wrong-q {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: rgba(244,241,236,0.32);
+      line-height: 1.5;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--sand-accent);
+      margin-bottom: 1.25rem;
+    }
+    .sand-wrong-q::before {
+      content: 'The wrong question';
+      display: block;
+      font-size: 0.46rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244,241,236,0.15);
+      margin-bottom: 0.3rem;
+    }
+
+    .sand-title {
+      font-family: var(--serif);
+      font-size: clamp(1.3rem, 2vw, 1.7rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--paper);
+      margin-bottom: 1rem;
+    }
+
+    .sand-body {
+      font-size: 0.855rem;
+      color: rgba(244,241,236,0.35);
+      line-height: 1.78;
+      flex: 1;
+    }
+
+    .sand-tag {
+      display: inline-block;
+      margin-top: 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.46rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.65rem;
+      border: 1px solid var(--sand-rule);
+      color: rgba(244,241,236,0.22);
+      align-self: flex-start;
+    }
+
+    /* ── INVITE ── */
+    .invite-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .invite-statement {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: var(--paper);
+    }
+    .invite-statement em {
+      display: block;
+      font-style: italic;
+      font-weight: 400;
+      color: rgba(244,241,236,0.28);
+      font-size: 0.8em;
+      margin-top: 0.4rem;
+    }
+
+    .invite-body p {
+      font-size: 0.975rem;
+      color: rgba(244,241,236,0.48);
+      line-height: 1.85;
+      margin-bottom: 1.25rem;
+    }
+    .invite-body p:last-child { margin-bottom: 0; }
+
+    .invite-accusation {
+      font-size: 0.975rem;
+      color: rgba(244,241,236,0.7);
+      line-height: 1.85;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--rule-dark);
+    }
+
+    .invite-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: var(--paper);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(244,241,236,0.15);
+      padding-bottom: 0.3rem;
+      margin-top: 1.25rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .invite-email:hover { color: var(--accent); border-color: var(--accent); }
+    .invite-email::after { content: '→'; transition: transform 0.2s; }
+    .invite-email:hover::after { transform: translateX(4px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      border-top: 1px solid #1E1E1E;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-left {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .footer-right {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #666;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { padding: 8rem 1.5rem 5rem; }
+      .inner { padding: 5rem 1.5rem; }
+      .interstitial { padding: 5rem 1.5rem; }
+      .bridge { padding: 1.5rem 1.5rem 3rem; }
+      .who-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .method-body { grid-template-columns: 1fr; gap: 0; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .lab-card-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+      .sand-grid { grid-template-columns: 1fr; }
+      .invite-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-headline { font-size: 2.2rem; }
+      .lab-card { padding: 1.75rem; }
+      .sand-card { padding: 1.75rem 1.5rem; }
+      .case-card { padding: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav-overlay" id="navOverlay">
+    <a href="#who" onclick="closeMenu()">Who</a>
+    <a href="#methodology" onclick="closeMenu()">Methodology</a>
+    <a href="#work" onclick="closeMenu()">The Work</a>
+    <a href="#lab" onclick="closeMenu()">The Lab</a>
+    <a href="#sandbox" onclick="closeMenu()">The Sandbox</a>
+    <a href="#" id="overlayEmail" class="overlay-cta" onclick="closeMenu()">Start a conversation</a>
+  </div>
+
+  <nav>
+    <a href="/" class="nav-logo">The Unanswered</a>
+    <div class="nav-right">
+      <div class="nav-links-desktop" style="display:flex;align-items:center;gap:2rem;">
+        <a href="#work" class="nav-link">The Work</a>
+        <a href="#lab" class="nav-link">The Lab</a>
+        <a href="#sandbox" class="nav-link">The Sandbox</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+      <a href="#contact" id="navCtaLink" class="nav-cta">Start a conversation</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg-word">Unanswered</div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Chris Kelly &nbsp;·&nbsp; Glasgow</p>
+      <h1 class="hero-headline">
+        You know something needs to change.
+        <span class="line-2">You don't yet have the language to say what.</span>
+      </h1>
+      <div class="hero-sub">
+        <p>Most engagements begin after the foundations are laid. Mine begin when nobody can agree what the foundations should be.</p>
+      </div>
+    </div>
+    <div class="hero-down"><span>Scroll</span></div>
+  </section>
+
+  <!-- ── WHO ── -->
+  <div class="section-paper" id="who">
+    <div class="inner">
+      <p class="section-label">Who</p>
+      <div class="who-grid">
+        <div>
+          <h2 class="who-name">Chris Kelly</h2>
+          <span class="who-title">Fractional CPO &amp; CTO</span>
+          <div class="who-socials">
+            <a href="https://www.linkedin.com/in/chriskellycto/" target="_blank" rel="noopener" class="social-link">
+              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+            <a href="https://twitter.com/cjk_1983" target="_blank" rel="noopener" class="social-link">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              X / Twitter
+            </a>
+          </div>
+        </div>
+        <div class="who-body reveal">
+          <p>That moment — when you know something is wrong but can't name it precisely enough to act on it — is exactly where I start.</p>
+          <p>I don't want to see your pitch deck. I don't want to meet your happy customers. Show me the last high-value person who left without explanation. Show me the product decision everyone agreed on that quietly produced nothing. <strong>Show me what you stopped talking about in meetings.</strong></p>
+          <p>That's not a list of problems. That's the absence of a framework that would have made those things visible before they became problems.</p>
+          <p>I can talk to your developer, your designer, your CFO, and the customer you've never properly defined — and translate between all of them without losing fidelity in any direction. But I always build from the customer backwards. Everything else follows from that.</p>
+          <p>Twenty years across dental technology, SaaS, publishing, games, and financial services. Every role since 2014 has come through someone who worked with me before. The best introduction I've ever had: <em>"You need to get yourself a Chris."</em> I've never found a better way to describe it. So I stopped trying.</p>
+          <p class="who-selection">I'm not a steady state operator. I come in where nothing exists, build what needs to exist, and move on. That's not a limitation. It's a selection mechanism.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── METHODOLOGY ── -->
+  <div class="section-dark" id="methodology">
+    <div class="inner">
+      <p class="section-label">The Methodology</p>
+      <h2 class="method-headline reveal">The problem isn't that you're measuring the wrong things.</h2>
+      <p class="method-headline-sub reveal">It's that no framework exists yet to measure the right ones.</p>
+      <div class="method-body">
+        <div class="reveal">
+          <p>You can't optimise your way out of a structural problem. You can't report your way to clarity when the instrument that would produce clarity doesn't exist yet.</p>
+          <p>Every answer that didn't stick, every solution that worked for a quarter and then quietly stopped — that's not bad execution. <strong>That's an organisation trying to answer questions with tools that were never built to answer them.</strong></p>
+        </div>
+        <div class="reveal">
+          <p>I build the instrument first. Then I point it at the problem. Sometimes that produces a framework that makes existing signals readable for the first time. Sometimes it reveals a market gap nobody had the analytical foundation to see.</p>
+          <p>The process is identical. The output varies depending on what the analysis reveals.</p>
+        </div>
+        <p class="method-closer reveal">
+          The starting point is always the same.<br>
+          <strong>The moment before anyone can see clearly.</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE WORK ── -->
+  <div class="section-dark" id="work" style="border-top: 1px solid var(--rule-dark); padding-top: 0;">
+    <div class="inner" style="padding-top: 5rem;">
+      <p class="section-label">The Work</p>
+      <p class="work-meta reveal">Five cases &nbsp;·&nbsp; Three continents &nbsp;·&nbsp; Two types of output</p>
+      <div class="cases-grid">
+
+        <div class="case-card reveal">
+          <p class="case-region">Israel &nbsp;·&nbsp; Healthcare &amp; Ecommerce</p>
+          <p class="case-wrong-q">Why aren't people buying?</p>
+          <p class="case-body">They were analysing only the data they had. Nobody had asked what data they needed. The gap in understanding wasn't in the numbers — it was in the silence around them. We built the tracking architecture that should have existed from the start.</p>
+          <span class="case-type">Framework</span>
+        </div>
+
+        <div class="case-card reveal">
+          <p class="case-region">Pan-Africa &nbsp;·&nbsp; Gaming &amp; Gambling</p>
+          <p class="case-wrong-q">Why isn't revenue growing as expected?</p>
+          <p class="case-body">They had customer numbers. They had revenue. But "customer" was doing too much work — one word covering behaviours, values, and churn profiles that were completely different from each other. Aggregate numbers aren't an average when the underlying population is undefined. They're a blur. We defined the customer typology before any reporting could be meaningful.</p>
+          <span class="case-type">Framework</span>
+        </div>
+
+        <div class="case-card reveal">
+          <p class="case-region">Pan-Europe &nbsp;·&nbsp; Ecommerce &amp; Lifestyle</p>
+          <p class="case-wrong-q">Why aren't our conversion rates improving?</p>
+          <p class="case-body">Their measurement framework was internally consistent — which made it feel complete. It answered every question they were asking. The problem was the questions were built around their assumptions, not around what the business was actually doing. We rebuilt the framework to challenge the model rather than confirm it.</p>
+          <span class="case-type">Framework</span>
+        </div>
+
+        <div class="case-card reveal">
+          <p class="case-region">North America &nbsp;·&nbsp; Dental</p>
+          <p class="case-wrong-q">How do we commercialise what we have?</p>
+          <p class="case-body">Two engagements. One identified the opportunity to build a community platform from nothing — now active and monetised. One identified a gap in the dental valuation market, built the platform, the workflow, and the broker pathway from scratch. Each converted lead: $30–60k USD. Neither product existed before the analytical foundation was laid.</p>
+          <span class="case-type is-product">Product &nbsp;·&nbsp; 0 to 1</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WORK INTERSTITIAL ── -->
+  <div class="interstitial interstitial-work">
+    <div class="interstitial-inner reveal">
+      <p class="interstitial-line">
+        I come in where no instrument exists.
+        <em>I leave when you can finally see clearly.</em>
+        <em>What you do with that clarity is yours.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── BRIDGE ── -->
+  <div class="bridge reveal">
+    <p>The same starting point applied beyond client work looks like this.</p>
+  </div>
+
+  <!-- ── THE LAB ── -->
+  <div class="section-lab" id="lab">
+    <div class="inner">
+      <p class="section-label">The Lab</p>
+      <p class="lab-intro-primary reveal">
+        Industry intelligence built for commercial application. Each project is a standalone
+        framework — scoreable, deployable, and built to sit inside the processes of organisations
+        that should already know what their data is telling them.
+      </p>
+      <p class="lab-intro-secondary reveal">
+        The 198 didn't begin as a database. It began as a question nobody had built the architecture
+        to answer — what do the failures have in common that the successes were too busy succeeding
+        to notice. What's coming next applies the same starting point to specific sectors. Built for
+        the organisations that should already know what their presence is saying about them. Most
+        don't. That's the gap.
+      </p>
+      <div class="lab-grid">
+        <a href="https://czkelly1983.github.io/the198/" target="_blank" rel="noopener" class="lab-card reveal">
+          <span class="lab-arrow">↗</span>
+          <div class="lab-card-inner">
+            <div>
+              <p class="lab-domain">Corporate Failure</p>
+              <p class="lab-wrong-q">Why do successful companies fail?</p>
+              <h3 class="lab-title">The 198</h3>
+              <span class="lab-tag">Industry</span>
+            </div>
+            <div class="lab-body">
+              <p>198 companies. All dead. All preventable. The signals were there for months — sometimes years — before the end. Every one of these businesses had evidence it was misreading its own situation. Nobody was listening to what the failure was trying to say.</p>
+              <p>Ten death zones. 28 scored dimensions each. A forensic record of how companies die — and the lead indicators visible 18 to 24 months before collapse.</p>
+              <p class="lab-access">Access is free. What comes next isn't. → Talk to us about integration.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE SANDBOX ── -->
+  <div class="section-sand" id="sandbox">
+    <div class="inner">
+      <p class="section-label">The Sandbox</p>
+      <p class="sand-intro reveal">
+        No brief. No client. No softening. <em>The same methodology running free across questions
+        with nothing commercial at stake.</em> The music project didn't just rank 400 acts — it
+        required building a framework for what greatness actually means before a single act could
+        be scored. The framework didn't exist. We built it. Then we pointed it at seventy years of
+        British music and let it run without editorial interference. That's the move every time.
+        Define the instrument first. Then see what it shows you.
+      </p>
+      <div class="sand-grid">
+
+        <a href="https://czkelly1983.github.io/noguiltypleasures/" target="_blank" rel="noopener" class="sand-card reveal">
+          <span class="sand-arrow">↗</span>
+          <p class="sand-domain">Music &nbsp;·&nbsp; Culture</p>
+          <p class="sand-wrong-q">Who is the greatest British band?</p>
+          <h3 class="sand-title">No Guilty Pleasures</h3>
+          <p class="sand-body">Music canon is built entirely on the acts that succeeded. The question nobody asked was what the neglected ones were telling us about how badly we'd been measuring greatness in the first place. 400 acts. 70 years. No nostalgia.</p>
+          <span class="sand-tag">Free &nbsp;·&nbsp; Culture</span>
+        </a>
+
+        <a href="https://czkelly1983.github.io/No-Soft-Opinions/" target="_blank" rel="noopener" class="sand-card reveal">
+          <span class="sand-arrow">↗</span>
+          <p class="sand-domain">Cinema &nbsp;·&nbsp; Culture</p>
+          <p class="sand-wrong-q">What is the greatest film ever made?</p>
+          <h3 class="sand-title">No Soft Opinions</h3>
+          <p class="sand-body">Vertigo was dismissed on release. It took sixty years for the failure of that verdict to be heard. The gap between what succeeded in its moment and what history corrected is where the truth lives. 1,188 films. Every score arguable.</p>
+          <span class="sand-tag">Free &nbsp;·&nbsp; Culture</span>
+        </a>
+
+        <a href="https://czkelly1983.github.io/Thefield/" target="_blank" rel="noopener" class="sand-card reveal">
+          <span class="sand-arrow">↗</span>
+          <p class="sand-domain">Wrestling &nbsp;·&nbsp; Culture</p>
+          <p class="sand-wrong-q">Who was WWE's greatest ever talent?</p>
+          <h3 class="sand-title">The Field</h3>
+          <p class="sand-body">The push decisions are the successes WWE built on. The buried careers are the failures nobody was reading. The site is entirely about what those failures were trying to say — and whether anyone was listening. 300 wrestlers. 40 years.</p>
+          <span class="sand-tag">Free &nbsp;·&nbsp; Culture</span>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN INTERSTITIAL ── -->
+  <div class="interstitial">
+    <div class="interstitial-inner reveal">
+      <p class="interstitial-line">
+        The right question was always there.
+        <em>It just went unanswered.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── INVITE ── -->
+  <div class="section-dark" id="contact">
+    <div class="inner">
+      <p class="section-label">Let's Talk</p>
+      <div class="invite-grid">
+        <h2 class="invite-statement reveal">
+          You build for success.
+          <em>I understand your failures.</em>
+        </h2>
+        <div class="invite-body reveal">
+          <p class="invite-accusation">The tools you're using to understand your business were built to confirm what you already believed — not to show you what you haven't seen yet.</p>
+          <p>If you need someone to build the framework before the conversation about performance can even start. If the signals are there but nobody has built the instrument to read them. If you need a product that doesn't exist yet and someone who can take it from analytical foundation through to commercial reality.</p>
+          <p>That's the work. Fractional CPO and CTO across dental technology, SaaS, publishing, games, and financial services. Glasgow-based. Working everywhere.</p>
+          <a id="contactEmail" class="invite-email"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-left">The Unanswered &nbsp;·&nbsp; Chris Kelly &nbsp;·&nbsp; © 2026</span>
+      <span class="footer-right" id="footerDomain"></span>
+    </div>
+  </footer>
+
+  <script>
+    // email constructed in JS — never raw in HTML
+    (function() {
+      const u = 'chris';
+      const d = 'theunanswered.co.uk';
+      const addr = u + '@' + d;
+      const mailto = 'mailto:' + addr;
+
+      const contactEl = document.getElementById('contactEmail');
+      if (contactEl) { contactEl.href = mailto; contactEl.textContent = addr; }
+
+      const navCta = document.getElementById('navCtaLink');
+      if (navCta) { navCta.href = mailto; }
+
+      const overlayEmail = document.getElementById('overlayEmail');
+      if (overlayEmail) { overlayEmail.href = mailto; }
+
+      const footerDomain = document.getElementById('footerDomain');
+      if (footerDomain) { footerDomain.textContent = d; }
+    })();
+
+    // scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 90);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => io.observe(el));
+
+    // mobile menu
+    const burger = document.getElementById('navBurger');
+    const overlay = document.getElementById('navOverlay');
+
+    burger.addEventListener('click', () => {
+      const isOpen = overlay.classList.toggle('open');
+      burger.classList.toggle('open', isOpen);
+      document.body.classList.toggle('menu-open', isOpen);
+    });
+
+    function closeMenu() {
+      overlay.classList.remove('open');
+      burger.classList.remove('open');
+      document.body.classList.remove('menu-open');
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  </script>
+
+</body>
+</html>
